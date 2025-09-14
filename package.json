@@ -14,15 +14,18 @@
     "compression": "^1.8.1",
     "connect-mongo": "^5.1.0",
     "cors": "^2.8.5",
+    "csv-parser": "^3.2.0",
     "dotenv": "^17.2.2",
     "ejs": "^3.1.10",
     "express": "^5.1.0",
+    "express-ejs-layouts": "^2.5.1",
     "express-flash": "^0.0.2",
     "express-session": "^1.18.2",
     "method-override": "^3.0.0",
     "moment-timezone": "^0.6.0",
     "mongoose": "^8.18.1",
     "morgan": "^1.10.1",
+    "multer": "^2.0.2",
     "socket.io": "^4.8.1"
   },
   "devDependencies": {

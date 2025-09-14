@@ -1,0 +1,171 @@
+<%- include("../templantes/cabecera", { titulo: 'Gestión de Personal' }) %>
+
+<!--begin::Content-->
+<div class="content d-flex flex-column flex-column-fluid" id="kt_content">
+    <div class="d-flex flex-column-fluid">
+        <div class="container">
+            <div class="card card-custom">
+                <div class="card-header card-header-tabs-line">
+                    <div class="card-title">
+                        <h3 class="card-label">Gestión de Personal</h3>
+                    </div>
+                    <div class="card-toolbar">
+                        <ul class="nav nav-tabs nav-bold nav-tabs-line">
+                            <li class="nav-item">
+                                <a class="nav-link active" data-toggle="tab" href="#tab_empleados">
+                                    <span class="nav-icon"><i class="flaticon2-user-group"></i></span>
+                                    <span class="nav-text">Listado de Empleados</span>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" data-toggle="tab" href="#tab_contratos">
+                                    <span class="nav-icon"><i class="flaticon2-paper"></i></span>
+                                    <span class="nav-text">Catálogo de Contratos</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="tab-content">
+
+                        <!-- ================= PESTAÑA 1: LISTADO DE EMPLEADOS ================= -->
+                        <div class="tab-pane fade show active" id="tab_empleados" role="tabpanel">
+                            <div class="d-flex justify-content-end align-items-center mb-5">
+                                <span class="text-muted mr-3">Gestione la información de sus colaboradores</span>
+                                <button type="button" class="btn btn-primary font-weight-bolder" data-toggle="modal" data-target="#modalNuevoEmpleado"><i class="la la-plus"></i> Nuevo Empleado</button>
+                            </div>
+                            <table class="table table-bordered table-hover table-checkable datatable" id="kt_datatable_personal">
+                                <thead>
+                                    <tr><th>Nombre Completo</th><th>Documento</th><th>Cargo</th><th>Sector</th><th>Estado</th><th>Acciones</th></tr>
+                                </thead>
+                                <tbody>
+                                    <% empleados.forEach(emp => { %>
+                                        <tr class="<%= emp.estado !== 'ACTIVO' ? 'table-secondary opacity-75' : '' %>">
+                                            <td><%= emp.nombres %> <%= emp.apellidos %></td><td><%= emp.documento %></td>
+                                            <td><%= emp.cargo ? emp.cargo.nombre : 'N/A' %></td><td><%= emp.sector ? emp.sector.nombre_comercial : 'N/A' %></td>
+                                            <td><span class="label label-<%= emp.estado === 'ACTIVO' ? 'success' : 'danger' %> label-inline"><%= emp.estado %></span></td>
+                                            <td nowrap="nowrap"><a href="/nomina/personal/<%= emp._id %>" class="btn btn-sm btn-clean btn-icon" title="Ver Expediente / Editar"><i class="la la-user-edit"></i></a></td>
+                                        </tr>
+                                    <% }) %>
+                                </tbody>
+                            </table>
+                        </div>
+                        
+                        <!-- ================= PESTAÑA 2: CATÁLOGO DE CONTRATOS ================= -->
+                        <div class="tab-pane fade" id="tab_contratos" role="tabpanel">
+                            <div class="d-flex justify-content-end align-items-center mb-5">
+                                <span class="text-muted mr-3">Cree y administre los tipos de contrato base</span>
+                                <button type="button" class="btn btn-primary font-weight-bolder" data-toggle="modal" data-target="#modalNuevoContrato"><i class="la la-plus"></i> Nuevo Contrato Maestro</button>
+                            </div>
+                            <table class="table table-bordered table-hover table-checkable datatable" id="kt_datatable_contratos">
+                                <thead>
+                                    <tr><th>Tipo</th><th>Periodicidad</th><th>Salario Base</th><th>Salario Hora</th><th>Estado</th><th>Acciones</th></tr>
+                                </thead>
+                                <tbody>
+                                    <% contratos.forEach(c => { %>
+                                        <tr class="<%= !c.activo ? 'table-secondary opacity-75' : '' %>">
+                                            <td><%= c.tipo %></td><td><%= c.periodicidad %></td>
+                                            <td><%= c.salario_base_mensual ? '$' + c.salario_base_mensual.toFixed(2) : 'N/A' %></td>
+                                            <td><%= c.salario_por_hora ? '$' + c.salario_por_hora.toFixed(2) : 'N/A' %></td>
+                                            <td><span class="label label-<%= c.activo ? 'success' : 'danger' %> label-inline"><%= c.activo ? 'Activo' : 'Inactivo' %></span></td>
+                                            <td nowrap="nowrap">
+                                                <!-- BOTÓN CORREGIDO -->
+                                                <a href="/nomina/contratos/<%= c._id %>" class="btn btn-sm btn-clean btn-icon" title="Ver Detalle y Asignar Empleados">
+                                                    <i class="la la-users-cog"></i>
+                                                </a>
+                                            </td>
+                                        </tr>
+                                    <% }) %>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ================= MODAL NUEVO EMPLEADO ================= -->
+<div class="modal fade" id="modalNuevoEmpleado" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+        <div class="modal-content"><div class="modal-header"><h5 class="modal-title">Registrar Nuevo Empleado</h5><button type="button" class="close" data-dismiss="modal"><i class="ki ki-close"></i></button></div>
+            <form class="form" action="/nomina/empleado" method="POST">
+                <div class="modal-body">
+                    <h4 class="text-dark font-weight-bold mb-5">Información Básica</h4>
+                    <div class="form-group row"><div class="col-lg-6"><label>Nombres:*</label><input type="text" name="nombres" class="form-control" required /></div><div class="col-lg-6"><label>Apellidos:*</label><input type="text" name="apellidos" class="form-control" required /></div></div>
+                    <div class="form-group row"><div class="col-lg-6"><label>Documento de Identidad:*</label><input type="text" name="documento" class="form-control" required /></div><div class="col-lg-6"><label>Fecha de Ingreso:*</label><input type="date" name="fecha_ingreso" class="form-control" required /></div></div>
+                    <div class="separator separator-dashed my-8"></div>
+                    <h4 class="text-dark font-weight-bold mb-5">Asignación Organizacional y de Usuario</h4>
+                    <div class="form-group row"><div class="col-lg-6"><label>Sector (Empresa/País):*</label><select class="form-control" name="sector" required><option value="" disabled selected>Seleccione...</option><% sectores.forEach(s => { %><option value="<%= s._id %>"><%= s.nombre_comercial %></option><% }) %></select></div><div class="col-lg-6"><label>Cargo:*</label><select class="form-control" name="cargo" required><option value="" disabled selected>Seleccione...</option><% cargos.forEach(c => { %><option value="<%= c._id %>"><%= c.nombre %></option><% }) %></select></div></div>
+                    <div class="form-group row">
+                        <div class="col-lg-12">
+                            <label>Vincular a Usuario del Sistema:</label>
+                            <select class="form-control" name="usuario">
+                                <option value="">-- Sin Vincular --</option>
+                                <% if (typeof usuarios !== 'undefined' && usuarios) { %>
+                                    <% usuarios.forEach(u => { %>
+                                        <option value="<%= u._id %>"><%= u.name %> (<%= u.correo %>)</option>
+                                    <% }) %>
+                                <% } %>
+                            </select>
+                            <span class="form-text text-muted">Opcional. Vincula este registro de empleado a un usuario existente.</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer"><button type="button" class="btn btn-light-primary" data-dismiss="modal">Cancelar</button><button type="submit" class="btn btn-primary">Guardar</button></div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- ================= MODAL NUEVO CONTRATO MAESTRO ================= -->
+<div class="modal fade" id="modalNuevoContrato" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header"><h5 class="modal-title">Crear Nuevo Contrato Maestro</h5><button type="button" class="close" data-dismiss="modal"><i class="ki ki-close"></i></button></div>
+            <form class="form" action="/nomina/contrato" method="POST">
+                <div class="modal-body">
+                    <div class="form-group row">
+                        <div class="col-lg-6"><label>Tipo de Contrato:*</label><select name="tipo" class="form-control" required><option value="FIJO">Fijo</option><option value="INDEFINIDO">Indefinido</option><option value="POR_HORAS">Por Horas</option></select></div>
+                        <div class="col-lg-6"><label>Periodicidad de Pago:*</label><select name="periodicidad" class="form-control" required><option value="MENSUAL">Mensual</option><option value="QUINCENAL">Quincenal</option><option value="SEMANAL">Semanal</option></select></div>
+                    </div>
+                    <div class="form-group row">
+                        <div class="col-lg-6"><label>Salario Base Mensual (si aplica):</label><div class="input-group"><div class="input-group-prepend"><span class="input-group-text">$</span></div><input type="number" step="0.01" name="salario_base_mensual" class="form-control" placeholder="0.00"></div><span class="form-text text-muted">Para contratos FIJO o INDEFINIDO.</span></div>
+                        <div class="col-lg-6"><label>Salario por Hora (si aplica):</label><div class="input-group"><div class="input-group-prepend"><span class="input-group-text">$</span></div><input type="number" step="0.01" name="salario_por_hora" class="form-control" placeholder="0.00"></div><span class="form-text text-muted">Para contratos POR HORAS.</span></div>
+                    </div>
+                    <div class="form-group row">
+                        <div class="col-lg-12"><label>Estado Inicial:</label><select name="activo" class="form-control"><option value="true">Activo</option><option value="false">Inactivo</option></select></div>
+                    </div>
+                </div>
+                <div class="modal-footer"><button type="button" class="btn btn-light-primary" data-dismiss="modal">Cancelar</button><button type="submit" class="btn btn-primary">Guardar</button></div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<%- include("../templantes/footer") %>
+<%- include("../templantes/script_page") %>
+
+<script>
+    "use strict";
+    jQuery(document).ready(function() {
+        // Inicializar todas las tablas con la clase 'datatable'
+        $('.datatable').DataTable({
+            responsive: true,
+            language: { "url": "https://cdn.datatables.net/plug-ins/1.10.25/i18n/Spanish.json" }
+        });
+
+        // Manejar el estado de las pestañas (tabs) con el hash de la URL
+        let hash = window.location.hash;
+        if (hash) {
+            $('.nav-tabs a[href="' + hash + '"]').tab('show');
+        }
+        $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
+            window.location.hash = e.target.hash;
+            // Al cambiar de pestaña, recalcular el tamaño de TODAS las DataTables
+            $($.fn.dataTable.tables(true)).DataTable().columns.adjust().responsive.recalc();
+        });
+    });
+</script>

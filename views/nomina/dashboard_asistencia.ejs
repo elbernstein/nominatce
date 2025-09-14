@@ -1,0 +1,105 @@
+<%- include("../templantes/cabecera", { titulo: titulo }) %>
+
+<div class="content d-flex flex-column flex-column-fluid" id="kt_content">
+    <div class="d-flex flex-column-fluid">
+        <div class="container">
+            <div class="row">
+                <!-- Columna para Marcaje Manual -->
+                <div class="col-lg-5">
+                    <div class="card card-custom gutter-b">
+                        <div class="card-header"><div class="card-title"><h3 class="card-label">Registro Manual</h3></div></div>
+                        <form action="/nomina/marcaje-manual" method="POST">
+                            <div class="card-body">
+                                <div class="form-group">
+                                    <label>Empleado:*</label>
+                                    <select name="empleado" class="form-control select2" required>
+                                        <option value="" disabled selected>Seleccione un empleado...</option>
+                                        <% empleados.forEach(e => { %><option value="<%= e._id %>"><%= e.nombres %> <%= e.apellidos %></option><% }) %>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label>Fecha y Hora del Marcaje:*</label>
+                                    <input type="datetime-local" name="ts" class="form-control" required />
+                                </div>
+                                <div class="form-group">
+                                    <label>Tipo de Marcaje:*</label>
+                                    <select name="tipo" class="form-control" required><option value="IN">Entrada (IN)</option><option value="OUT">Salida (OUT)</option></select>
+                                </div>
+                                <input type="hidden" name="fuente" value="MANUAL">
+                            </div>
+                            <div class="card-footer"><button type="submit" class="btn btn-primary">Registrar Marcaje</button></div>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Columna para Carga Masiva -->
+                <div class="col-lg-7">
+                    <div class="card card-custom gutter-b">
+<div class="card-header d-flex justify-content-between align-items-center">
+    <div class="card-title">
+        <h3 class="card-label mb-0">Carga Masiva (CSV)</h3>
+    </div>
+    <div class="card-toolbar">
+        <a href="/nomina/asistencia/plantilla-csv" class="btn btn-light-success btn-sm font-weight-bold">
+            <i class="la la-download"></i> Descargar Plantilla
+        </a>
+    </div>
+</div>                        <form action="/nomina/marcajes-csv" method="POST" enctype="multipart/form-data">
+                            <div class="card-body">
+                                <div class="form-group">
+                                    <label>Seleccionar Archivo .csv</label>
+                                    <input type="file" name="archivo_csv" class="form-control-file" accept=".csv" required>
+                                </div>
+                                <div class="alert alert-custom alert-light-info mt-5 p-5" role="alert">
+                                    <div class="alert-icon"><i class="flaticon-information"></i></div>
+                                    <div class="alert-text">
+                                        <p class="font-weight-bold">El archivo CSV debe tener las siguientes columnas (con cabecera):</p>
+                                        <ul>
+                                            <li><b>documento</b>: El N° de documento del empleado.</li>
+                                            <li><b>timestamp</b>: La fecha y hora (ej: <code>2025-10-23T08:01:00</code>).</li>
+                                            <li><b>tipo</b>: El tipo de marcaje, debe ser <code>IN</code> o <code>OUT</code>.</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card-footer"><button type="submit" class="btn btn-success">Importar Marcajes</button></div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tabla de Actividad Reciente -->
+            <div class="card card-custom">
+                <div class="card-header"><div class="card-title"><h3 class="card-label">Actividad Reciente</h3></div></div>
+                <div class="card-body">
+                    <table class="table table-hover">
+                        <thead><tr><th>Fecha y Hora</th><th>Empleado</th><th>Tipo</th><th>Fuente</th></tr></thead>
+                        <tbody>
+                            <% marcajesRecientes.forEach(m => { %>
+                                <tr>
+                                    <td><%= new Date(m.ts).toLocaleString('es-ES') %></td>
+                                    <td><%= m.empleado.nombres %> <%= m.empleado.apellidos %></td>
+                                    <td><span class="label label-<%= m.tipo === 'IN' ? 'success' : 'danger' %> label-inline font-weight-bold"><%= m.tipo %></span></td>
+                                    <td><%= m.fuente %></td>
+                                </tr>
+                            <% }) %>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<%- include("../templantes/footer") %>
+<%- include("../templantes/script_page") %>
+
+<script>
+    jQuery(document).ready(function() {
+        // Inicializar Select2 para la búsqueda de empleados
+        $('.select2').select2({
+            placeholder: "Buscar empleado por nombre...",
+            width: '100%'
+        });
+    });
+</script>

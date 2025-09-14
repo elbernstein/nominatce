@@ -1,0 +1,51 @@
+<%# views/nomina/_partial_cargos.ejs %>
+
+<div class="d-flex justify-content-between align-items-center mb-5">
+    <div>
+        <h4 class="card-title">Listado de Cargos</h4>
+        <span class="text-muted">Catálogo de puestos de trabajo de la organización.</span>
+    </div>
+    <button type="button" class="btn btn-primary font-weight-bolder" data-toggle="modal" data-target="#modalNuevoCargo">
+        <i class="la la-plus"></i> Nuevo Cargo
+    </button>
+</div>
+
+<!-- Tabla de Cargos -->
+<table class="table table-bordered table-hover table-checkable datatable">
+    <thead>
+        <tr>
+            <th>Nombre del Cargo</th>
+            <th>Descripción</th>
+            <th>Nivel Jerárquico</th>
+            <th>Acciones</th>
+        </tr>
+    </thead>
+    <tbody>
+        <% cargos.forEach(cargo => { %>
+            <tr>
+                <td><%= cargo.nombre %></td>
+                <td><%= cargo.descripcion || 'N/A' %></td>
+                <td><%= cargo.nivel_jerarquico %></td>
+                <td nowrap="nowrap">
+                    <a href="javascript:;" class="btn btn-sm btn-clean btn-icon" title="Editar"
+                        data-toggle="modal" data-target="#modalEditarCargo"
+                        data-id="<%= cargo._id %>" data-nombre="<%= cargo.nombre %>"
+                        data-descripcion="<%= cargo.descripcion || '' %>" data-nivel="<%= cargo.nivel_jerarquico %>">
+                        <i class="la la-edit"></i>
+                    </a>
+                    <a href="/nomina/cargo/eliminar/<%= cargo._id %>" class="btn btn-sm btn-clean btn-icon btn-eliminar" title="Eliminar">
+                        <i class="la la-trash"></i>
+                    </a>
+                </td>
+            </tr>
+        <% }) %>
+    </tbody>
+</table>
+
+<!-- Modales para Cargos -->
+<div class="modal fade" id="modalNuevoCargo" tabindex="-1" role="dialog" aria-hidden="true">
+    <!-- ... Pega aquí el contenido completo del modal #modalNuevoCargo ... -->
+</div>
+<div class="modal fade" id="modalEditarCargo" tabindex="-1" role="dialog" aria-hidden="true">
+    <!-- ... Pega aquí el contenido completo del modal #modalEditarCargo ... -->
+</div>

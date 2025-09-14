@@ -1,34 +1,33 @@
-
 <!DOCTYPE html>
 <html lang="es">
-<!--begin::Head-->
-<head><base href="/">
+<head>
+  <!-- <base href="/">  <-- LÍNEA ELIMINADA O COMENTADA -->
   <meta charset="utf-8" />
-  <title><%= nombre_pagina %></title>
-  <meta name="description" content="Tu caja express." />
+  <title><%= locals.titulo || 'Nómina TCE' %></title>
+  <meta name="description" content="Sistema de Nómina Multinacional" />
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
-  <link rel="canonical" href="https://keenthemes.com/metronic" />
+  
   <!--begin::Fonts-->
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700" />
   <!--end::Fonts-->
-  <!--begin::Page Vendors Styles(used by this page)-->
+
+  <!--begin::Page Vendors Styles-->
   <link href="/assets/plugins/custom/fullcalendar/fullcalendar.bundle.css" rel="stylesheet" type="text/css" />
   <link href="/assets/plugins/custom/datatables/datatables.bundle.css" rel="stylesheet" type="text/css" />
   <!--end::Page Vendors Styles-->
-  <!--begin::Global Theme Styles(used by all pages)-->
+
+  <!--begin::Global Theme Styles-->
   <link href="/assets/plugins/global/plugins.bundle.css" rel="stylesheet" type="text/css" />
   <link href="/assets/plugins/custom/prismjs/prismjs.bundle.css" rel="stylesheet" type="text/css" />
   <link href="/assets/css/style.bundle.css" rel="stylesheet" type="text/css" />
   <!--end::Global Theme Styles-->
-  <!--begin::Layout Themes(used by all pages)-->
+
+  <!--begin::Layout Themes-->
   <link href="/assets/css/themes/layout/header/base/light.css" rel="stylesheet" type="text/css" />
   <link href="/assets/css/themes/layout/header/menu/light.css" rel="stylesheet" type="text/css" />
   <link href="/assets/css/themes/layout/brand/dark.css" rel="stylesheet" type="text/css" />
   <link href="/assets/css/themes/layout/aside/dark.css" rel="stylesheet" type="text/css" />
- 
-  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <!--end::Layout Themes-->
+  
   <link rel="shortcut icon" href="/assets/media/logos/favicon.ico" />
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/flag-icon-css/3.6.6/css/flag-icon.min.css">
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
 </head>

@@ -1,0 +1,76 @@
+<%# views/nomina/timesheet.ejs %>
+
+<div class="card card-custom">
+    <div class="card-header">
+        <div class="card-title">
+            <h3 class="card-label">Auditoría de Timesheet Diario</h3>
+        </div>
+    </div>
+    <div class="card-body">
+        <!-- Filtros de Búsqueda -->
+        <form method="GET" action="/nomina/timesheet" class="mb-8">
+            <div class="row">
+                <div class="col-lg-4 mb-lg-0 mb-6">
+                    <label>Empleado:</label>
+                    <select name="empleadoId" class="form-control select2" id="kt_select2_empleado_ts" required>
+                         <option value="">Seleccione un empleado...</option>
+                         <% empleados.forEach(e => { %>
+                            <option value="<%= e._id %>" <%= (locals.filtros && filtros.empleadoId == e._id) ? 'selected' : '' %>>
+                                <%= e.nombres %> <%= e.apellidos %>
+                            </option>
+                        <% }) %>
+                    </select>
+                </div>
+                <div class="col-lg-3 mb-lg-0 mb-6">
+                    <label>Fecha de Inicio:</label>
+                    <input type="date" name="fechaInicio" class="form-control" value="<%= locals.filtros ? filtros.fechaInicio : '' %>" required>
+                </div>
+                <div class="col-lg-3 mb-lg-0 mb-6">
+                    <label>Fecha de Fin:</label>
+                    <input type="date" name="fechaFin" class="form-control" value="<%= locals.filtros ? filtros.fechaFin : '' %>" required>
+                </div>
+                <div class="col-lg-2 align-self-end">
+                    <button type="submit" class="btn btn-primary btn-block">Buscar</button>
+                </div>
+            </div>
+        </form>
+
+        <!-- Tabla de Resultados -->
+        <% if (locals.timesheets && timesheets.length) { %>
+            <table class="table table-bordered table-hover">
+                <thead>
+                    <tr>
+                        <th>Fecha</th>
+                        <th>Horas Normales</th>
+                        <th>H. Extra Diurnas</th>
+                        <th>H. Extra Nocturnas</th>
+                        <th>H. Festivas</th>
+                        <th>Tardanza (min)</th>
+                        <th>Falta</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% timesheets.forEach(ts => { %>
+                        <tr class="<%= ts.falta_injustificada ? 'table-danger' : '' %>">
+                            <td><%= ts.fecha_local %></td>
+                            <td><%= ts.horas_normales.toFixed(2) %></td>
+                            <td><%= ts.horas_extra_diurnas.toFixed(2) %></td>
+                            <td><%= ts.horas_extra_nocturnas.toFixed(2) %></td>
+                            <td><%= ts.horas_festivas.toFixed(2) %></td>
+                            <td><%= ts.tardanza_min %></td>
+                            <td><%= ts.falta_injustificada ? 'Sí' : 'No' %></td>
+                        </tr>
+                    <% }) %>
+                </tbody>
+            </table>
+        <% } else if (locals.filtros && filtros.empleadoId) { %>
+            <div class="alert alert-info">No se encontraron registros de timesheet para los filtros seleccionados.</div>
+        <% } %>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    $('#kt_select2_empleado_ts').select2({ placeholder: "Buscar empleado..." });
+});
+</script>

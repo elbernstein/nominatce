@@ -1,0 +1,58 @@
+<!-- views/prueba.ejs -->
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title><%= locals.titulo %></title>
+    <!-- Prueba 1: Cargar un archivo CSS desde la misma carpeta que SÍ funcionó -->
+    <link rel="stylesheet" href="/assets/css/style.bundle.css">
+    
+    <!-- Prueba 2: Estilo en línea para asegurarnos de que el HTML carga -->
+    <style>
+        body { background-color: #f0f8ff; font-family: sans-serif; padding: 20px; }
+        h1 { color: navy; }
+        p { color: #333; }
+        .test-box {
+            padding: 20px;
+            margin-top: 20px;
+            border-radius: 8px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Página de Prueba</h1>
+    <p>Si ves esta página con un fondo azul claro (AliceBlue), el servidor está funcionando y la vista se renderiza.</p>
+
+    <div id="status-box" class="test-box">
+        Verificando el estado del CSS...
+    </div>
+
+    <!-- No incluimos más scripts para no añadir complejidad -->
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const h1 = document.querySelector('h1');
+            const statusBox = document.getElementById('status-box');
+
+            // Esta función se ejecuta después de que la página ha intentado cargar el CSS.
+            // Verificaremos el estilo que `style.bundle.css` debería aplicar.
+            // Por ejemplo, Metronic suele aplicar `font-weight` al body o a los h1.
+            const style = window.getComputedStyle(h1);
+
+            // Cambiamos el criterio a algo genérico de Bootstrap que Metronic usa
+            const isBootstrapLoaded = typeof(bootstrap) !== 'undefined' || (window.jQuery && typeof(window.jQuery.fn.modal) !== 'undefined');
+
+            if (parseFloat(style.fontSize) > 16) { // Un valor por defecto del navegador suele ser 16px para h1 sin estilo. El CSS le dará un valor mayor.
+                statusBox.textContent = '¡ÉXITO! El archivo style.bundle.css se ha cargado correctamente. El problema está en tus archivos EJS de plantilla.';
+                statusBox.style.backgroundColor = '#d4edda'; // Verde éxito
+                statusBox.style.color = '#155724';
+                statusBox.style.border = '1px solid #c3e6cb';
+            } else {
+                statusBox.textContent = 'FALLO. El archivo style.bundle.css NO se cargó. Verifica la URL y la consola (F12).';
+                statusBox.style.backgroundColor = '#f8d7da'; // Rojo fallo
+                statusBox.style.color = '#721c24';
+                statusBox.style.border = '1px solid #f5c6cb';
+            }
+        });
+    </script>
+</body>
+</html>

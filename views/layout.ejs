@@ -1,0 +1,10 @@
+<%# views/layout.ejs (MODO "SOLO BODY") %>
+
+<%# Esta línea mágica toma el contenido de la vista (ej. dashboard_configuracion.ejs) %>
+<%# y lo inyecta aquí. Como no hay nada más, el resultado final será solo el body. %>
+<%- body %>
+
+<%# Ahora, la sección de scripts se inyecta al final del body %>
+<% if (locals.scripts) { %>
+    <%- scripts %>
+<% } %>

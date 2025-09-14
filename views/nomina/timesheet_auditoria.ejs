@@ -1,0 +1,107 @@
+<%- include("../templantes/cabecera", { titulo: titulo }) %>
+
+<!--begin::Content-->
+<div class="content d-flex flex-column flex-column-fluid" id="kt_content">
+    <div class="d-flex flex-column-fluid">
+        <div class="container">
+            <div class="card card-custom">
+                <div class="card-header">
+                    <div class="card-title">
+                        <h3 class="card-label">Auditoría de Timesheet Diario</h3>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <!--begin::Formulario de Filtros-->
+                    <form method="GET" action="/nomina/timesheet" class="mb-10">
+                        <div class="row align-items-end">
+                            <div class="col-lg-4 mb-lg-0 mb-6">
+                                <label><b>Empleado:</b></label>
+                                <select name="empleadoId" class="form-control select2" required>
+                                    <option value="" disabled <%= !filtros.empleadoId ? 'selected' : '' %>>Seleccione un empleado...</option>
+                                    <% empleados.forEach(e => { %>
+                                        <option value="<%= e._id %>" <%= (filtros.empleadoId == e._id) ? 'selected' : '' %>>
+                                            <%= e.nombres %> <%= e.apellidos %>
+                                        </option>
+                                    <% }) %>
+                                </select>
+                            </div>
+                            <div class="col-lg-3 mb-lg-0 mb-6">
+                                <label><b>Fecha de Inicio:</b></label>
+                                <input type="date" name="fecha_inicio" class="form-control" value="<%= filtros.fecha_inicio || '' %>" required>
+                            </div>
+                            <div class="col-lg-3 mb-lg-0 mb-6">
+                                <label><b>Fecha de Fin:</b></label>
+                                <input type="date" name="fecha_fin" class="form-control" value="<%= filtros.fecha_fin || '' %>" required>
+                            </div>
+                            <div class="col-lg-2">
+                                <button type="submit" class="btn btn-primary btn-block font-weight-bold">
+                                    <i class="la la-search"></i> Consultar
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                    <!--end::Formulario de Filtros-->
+
+                    <div class="separator separator-dashed my-8"></div>
+
+                    <!--begin::Tabla de Resultados-->
+                    <% if (timesheets.length > 0) { %>
+                        <h4 class="mb-5">Resultados para el período del <b><%= new Date(filtros.fecha_inicio + 'T00:00:00').toLocaleDateString() %></b> al <b><%= new Date(filtros.fecha_fin + 'T00:00:00').toLocaleDateString() %></b></h4>
+                        <table class="table table-bordered table-hover">
+                            <thead class="thead-light">
+                                <tr>
+                                    <th>Fecha</th>
+                                    <th>H. Normales</th>
+                                    <th>H. Extra Diurnas</th>
+                                    <th>H. Extra Nocturnas</th>
+                                    <th>H. Festivas</th>
+                                    <th>Tardanza (min)</th>
+                                    <th>Falta</th>
+                                    <th>Notas</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <% timesheets.forEach(ts => { %>
+                                    <tr class="<%= ts.falta_injustificada ? 'table-danger' : (ts.tardanza_min > 0 ? 'table-warning' : '') %>">
+                                        <td class="font-weight-bold"><%= new Date(ts.fecha_local + 'T00:00:00').toLocaleDateString('es-ES', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }) %></td>
+                                        <td><%= ts.horas_normales.toFixed(2) %></td>
+                                        <td><%= ts.horas_extra_diurnas.toFixed(2) %></td>
+                                        <td><%= ts.horas_extra_nocturnas.toFixed(2) %></td>
+                                        <td><%= ts.horas_festivas.toFixed(2) %></td>
+                                        <td><%= ts.tardanza_min %></td>
+                                        <td><span class="label label-<%= ts.falta_injustificada ? 'danger' : 'light-success' %> label-inline"><%= ts.falta_injustificada ? 'SÍ' : 'NO' %></span></td>
+                                        <td><%= ts.notas || '' %></td>
+                                    </tr>
+                                <% }) %>
+                            </tbody>
+                        </table>
+                    <% } else if (filtros.empleadoId) { %>
+                        <div class="alert alert-info">
+                            No se encontraron registros de timesheet para el empleado y el rango de fechas seleccionado. 
+                            Verifique que el empleado tenga marcajes registrados en este período.
+                        </div>
+                    <% } else { %>
+                        <div class="alert alert-info">
+                            Por favor, seleccione un empleado y un rango de fechas para generar el reporte de timesheet.
+                        </div>
+                    <% } %>
+                    <!--end::Tabla de Resultados-->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<%- include("../templantes/footer") %>
+<%- include("../templantes/script_page") %>
+
+<script>
+    "use strict";
+    jQuery(document).ready(function() {
+        // Inicializar Select2 para la búsqueda de empleados
+        $('.select2').select2({
+            placeholder: "Buscar empleado por nombre...",
+            width: '100%'
+        });
+    });
+</script>

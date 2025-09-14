@@ -1,0 +1,98 @@
+<%# views/nomina/dashboard_general.ejs %>
+<%# Este archivo es el BODY completo del módulo de nómina %>
+
+<!-- Estilos específicos para las pestañas activas -->
+<style>
+    .nav-tabs .nav-link.active {
+        background-color: #f3f6f9;
+        border-bottom-color: #f3f6f9;
+    }
+</style>
+
+<!-- TARJETA PRINCIPAL QUE ENVUELVE TODO EL MÓDULO -->
+<div class="card card-custom">
+    <div class="card-header card-header-tabs-line">
+        <div class="card-toolbar">
+            <ul class="nav nav-tabs nav-bold nav-tabs-line">
+                <li class="nav-item">
+                    <a class="nav-link active" data-toggle="tab" href="#tab_sectores">
+                        <span class="nav-icon"><i class="flaticon2-world"></i></span>
+                        <span class="nav-text">Sectores</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" data-toggle="tab" href="#tab_cargos">
+                        <span class="nav-icon"><i class="flaticon2-user-outline-symbol"></i></span>
+                        <span class="nav-text">Cargos / Jerarquías</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" data-toggle="tab" href="#tab_feriados">
+                        <span class="nav-icon"><i class="flaticon-calendar-3"></i></span>
+                        <span class="nav-text">Feriados</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="card-body">
+        <div class="tab-content">
+
+            <!-- ======================= PESTAÑA 1: SECTORES ======================= -->
+            <div class="tab-pane fade show active" id="tab_sectores" role="tabpanel">
+                <!-- Aquí pegamos el contenido de config.ejs -->
+                <%- include('_partial_sectores', { sectores: sectores }) %>
+            </div>
+
+            <!-- ======================= PESTAÑA 2: CARGOS ======================= -->
+            <div class="tab-pane fade" id="tab_cargos" role="tabpanel">
+                <!-- Aquí pegamos el contenido de cargos.ejs -->
+                <%- include('_partial_cargos', { cargos: cargos }) %>
+            </div>
+
+            <!-- ======================= PESTAÑA 3: FERIADOS ======================= -->
+            <div class="tab-pane fade" id="tab_feriados" role="tabpanel">
+                 <!-- Aquí pegamos el contenido de feriados.ejs -->
+                 <%- include('_partial_feriados', { feriados: feriados, sectores: sectores }) %>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- SCRIPTS PARA EL DASHBOARD (Necesarios para DataTables y modales) -->
+<!-- Como esto será el body, el sistema principal debe cargar jQuery, etc. -->
+<script>
+    "use strict";
+
+    function inicializarScriptsSectores() {
+        // Tu código JS que estaba en config.ejs
+    }
+
+    function inicializarScriptsCargos() {
+        // Tu código JS que estaba en cargos.ejs (DataTable, modal de edición, etc.)
+    }
+    
+    function inicializarScriptsFeriados() {
+        // El código JS que necesitaremos para la tabla de feriados
+    }
+
+    jQuery(document).ready(function() {
+        // Inicializamos los scripts de todas las tablas
+        inicializarScriptsSectores();
+        inicializarScriptsCargos();
+        inicializarScriptsFeriados();
+
+        // Código para activar la pestaña correcta al cargar la página
+        // si la URL tiene un hash (ej: /nomina#cargos)
+        let hash = window.location.hash;
+        if (hash) {
+            $('.nav-tabs a[href="' + hash + '"]').tab('show');
+        }
+
+        // Cuando se cambia de pestaña, se actualiza el hash en la URL
+        $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
+            window.location.hash = e.target.hash;
+        });
+    });
+</script>`

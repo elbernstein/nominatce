@@ -1,39 +1,261 @@
-<%- include("../templantes/cabecera", {nombre_pagina:'Configuración Nómina'}) %>
-<div class="container mt-6">
-  <div class="row">
-    <div class="col-md-6">
-      <div class="card card-custom">
-        <div class="card-header"><h3 class="card-title">Nuevo Sector (Empresa-País)</h3></div>
-        <form action="/nomina/sector" method="POST" class="form">
-          <div class="card-body">
-            <div class="form-group"><label>Nombre Comercial</label><input name="nombre_comercial" class="form-control form-control-solid" required></div>
-            <div class="form-group"><label>Razón Social</label><input name="razon_social" class="form-control form-control-solid" required></div>
-            <div class="form-group"><label>País (ISO2)</label><input name="pais_iso2" class="form-control form-control-solid" placeholder="CO" required></div>
-            <div class="form-group"><label>Moneda (ISO3)</label><input name="moneda_iso3" class="form-control form-control-solid" placeholder="COP" required></div>
-            <div class="form-group"><label>Time Zone</label><input name="timezone" class="form-control form-control-solid" placeholder="America/Bogota" required></div>
-          </div>
-          <div class="card-footer">
-            <button class="btn btn-primary">Guardar</button>
-          </div>
-        </form>
-      </div>
-    </div>
+<%# views/nomina/config.ejs (Versión limpia para usar con layout) %>
 
-    <div class="col-md-6">
-      <div class="card card-custom">
-        <div class="card-header"><h3 class="card-title">Sectores</h3></div>
-        <div class="card-body">
-          <table class="table">
-            <thead><tr><th>Comercial</th><th>País</th><th>Moneda</th><th>TZ</th></tr></thead>
-            <tbody>
-              <% sectores.forEach(s => { %>
-                <tr><td><%= s.nombre_comercial %></td><td><%= s.pais_iso2 %></td><td><%= s.moneda_iso3 %></td><td><%= s.timezone %></td></tr>
-              <% }) %>
-            </tbody>
-          </table>
+<!--begin::Content-->
+<div class="content d-flex flex-column flex-column-fluid" id="kt_content">
+    <!--begin::Entry-->
+    <div class="d-flex flex-column-fluid">
+        <!--begin::Container-->
+        <div class="container">
+            <!--begin::Card-->
+            <div class="card card-custom">
+                <div class="card-header flex-wrap border-0 pt-6 pb-0">
+                    <div class="card-title">
+                        <h3 class="card-label">Sectores (Empresa-País)
+                            <span class="d-block text-muted pt-2 font-size-sm">Administración de sedes, reglas de negocio y zonas horarias.</span>
+                        </h3>
+                    </div>
+                    <div class="card-toolbar">
+                        <button type="button" class="btn btn-primary font-weight-bolder" data-toggle="modal" data-target="#modalNuevoSector">
+                            <span class="svg-icon svg-icon-md">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24px" height="24px" viewBox="0 0 24 24" version="1.1"><g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd"><rect x="0" y="0" width="24" height="24" /><circle fill="#000000" cx="9" cy="15" r="6" /><path d="M8.8012943,7.00241953 C9.83837775,5.20768121 11.7781543,4 14,4 C17.3137085,4 20,6.6862915 20,10 C20,12.2218457 18.7923188,14.1616223 16.9975805,15.1987057 C16.9991904,15.1326658 17,15.0664274 17,15 C17,10.581722 13.418278,7 9,7 C8.93357256,7 8.86733422,7.00080962 8.8012943,7.00241953 Z" fill="#000000" opacity="0.3" /></g></svg>
+                            </span>Nuevo Sector
+                        </button>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <table class="table table-bordered table-hover table-checkable" id="kt_datatable_sectores">
+                        <thead>
+                            <tr><th>Nombre Comercial</th><th>Razón Social</th><th>País</th><th>Moneda</th><th>Timezone</th><th>Acciones</th></tr>
+                        </thead>
+                        <tbody>
+                            <% sectores.forEach(s => { %>
+                                <tr>
+                                    <td><%= s.nombre_comercial %></td><td><%= s.razon_social %></td><td><%= s.pais_iso2 %></td><td><%= s.moneda_iso3 %></td><td><%= s.timezone %></td>
+                                    <td nowrap="nowrap">
+                                        <a href="javascript:;" class="btn btn-sm btn-clean btn-icon" title="Editar"><i class="la la-edit"></i></a>
+                                        <a href="javascript:;" class="btn btn-sm btn-clean btn-icon" title="Eliminar"><i class="la la-trash"></i></a>
+                                    </td>
+                                </tr>
+                            <% }) %>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <!--end::Card-->
         </div>
-      </div>
+        <!--end::Container-->
     </div>
-
-  </div>
+    <!--end::Entry-->
 </div>
+<!--end::Content-->
+
+<!-- ================================================================================= -->
+<!-- MODAL PARA NUEVO SECTOR -->
+<!-- ================================================================================= -->
+<div class="modal fade" id="modalNuevoSector" tabindex="-1" role="dialog" aria-labelledby="modalNuevoSectorLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Crear Nuevo Sector</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><i aria-hidden="true" class="ki ki-close"></i></button>
+            </div>
+            <form class="form" action="/nomina/sector" method="POST">
+                <div class="modal-body">
+                    <h4 class="text-dark font-weight-bold mb-5">Información General</h4>
+                    <div class="form-group row">
+                        <div class="col-lg-6"><label>Nombre Comercial:*</label><input type="text" name="nombre_comercial" class="form-control" placeholder="Ej: Tu Caja Express Guatemala" required /></div>
+                        <div class="col-lg-6"><label>Razón Social:*</label><input type="text" name="razon_social" class="form-control" placeholder="Ej: Tu Caja Express S.A." required /></div>
+                    </div>
+                    <div class="form-group row">
+                        <div class="col-lg-4">
+                            <label>País:*</label>
+                            <div class="input-group">
+                                <select class="form-control" name="pais_iso2" id="paisSelect" required>
+                                    <option value="" disabled selected>Seleccionar...</option>
+                                    <option value="US">Estados Unidos</option>
+                                    <option value="GT">Guatemala</option>
+                                    <option value="HN">Honduras</option>
+                                    <option value="NI">Nicaragua</option>
+                                    <option value="SV">El Salvador</option>
+                                </select>
+                                <div class="input-group-append">
+                                    <button class="btn btn-secondary" type="button" title="Añadir nuevo país" data-toggle="modal" data-target="#modalNuevoPais"><i class="la la-plus"></i></button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-4">
+                            <label>Moneda:*</label>
+                            <div class="input-group">
+                                <select class="form-control" name="moneda_iso3" id="monedaSelect" required>
+                                    <option value="" disabled selected>Seleccionar...</option>
+                                    <option value="USD">USD - Dólar estadounidense</option>
+                                    <option value="GTQ">GTQ - Quetzal guatemalteco</option>
+                                    <option value="HNL">HNL - Lempira hondureña</option>
+                                    <option value="NIO">NIO - Córdoba nicaragüense</option>
+                                </select>
+                                <div class="input-group-append">
+                                    <button class="btn btn-secondary" type="button" title="Añadir nueva moneda" data-toggle="modal" data-target="#modalNuevaMoneda"><i class="la la-plus"></i></button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-4">
+                            <label>Zona Horaria (IANA):*</label>
+                            <select class="form-control" name="timezone" id="timezoneSelect" required>
+                                <option value="">Cargando zonas horarias...</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="separator separator-dashed my-8"></div>
+                    <h4 class="text-dark font-weight-bold mb-5">Reglas de Horas</h4>
+                     <div class="form-group row">
+                        <div class="col-lg-3"><label>Jornada Diaria:</label><input type="number" name="reglas_horas[horas_jornada_diaria]" class="form-control" value="8" /></div>
+                        <div class="col-lg-3"><label>Jornada Semanal:</label><input type="number" name="reglas_horas[horas_jornada_semanal]" class="form-control" value="48" /></div>
+                        <div class="col-lg-3"><label>Inicio Nocturnidad:</label><input type="text" name="reglas_horas[nocturnidad_inicio]" class="form-control" placeholder="21:00" value="21:00" /></div>
+                        <div class="col-lg-3"><label>Fin Nocturnidad:</label><input type="text" name="reglas_horas[nocturnidad_fin]" class="form-control" placeholder="06:00" value="06:00" /></div>
+                    </div>
+                    <div class="form-group row">
+                        <div class="col-lg-4"><label>Mult. Extra Diurna:</label><input type="number" step="0.01" name="reglas_horas[extra_diurna]" class="form-control" value="1.25" /></div>
+                        <div class="col-lg-4"><label>Mult. Extra Nocturna:</label><input type="number" step="0.01" name="reglas_horas[extra_nocturna]" class="form-control" value="1.35" /></div>
+                        <div class="col-lg-4"><label>Mult. Extra Festiva:</label><input type="number" step="0.01" name="reglas_horas[extra_festiva]" class="form-control" value="1.50" /></div>
+                    </div>
+                    <div class="separator separator-dashed my-8"></div>
+                    <h4 class="text-dark font-weight-bold mb-5">Reglas de Penalizaciones</h4>
+                    <div class="form-group row">
+                        <div class="col-lg-4"><label>Tolerancia (minutos):</label><input type="number" name="reglas_penalizaciones[tolerancia_minutos]" class="form-control" value="5" /></div>
+                        <div class="col-lg-4"><label>Descuento Tardanza (por min):</label><input type="number" step="0.01" name="reglas_penalizaciones[tardanza_descuento_por_minuto]" class="form-control" value="0" /></div>
+                        <div class="col-lg-4"><label>Descuento Falta (días):</label><input type="number" step="0.01" name="reglas_penalizaciones[falta_injustificada_descuento_dias]" class="form-control" value="1" /></div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-light-primary font-weight-bold" data-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-primary font-weight-bold">Guardar Sector</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- ================================================================================= -->
+<!-- MODAL PARA NUEVO PAÍS -->
+<!-- ================================================================================= -->
+<div class="modal fade" id="modalNuevoPais" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header"><h5 class="modal-title">Añadir Nuevo País</h5><button type="button" class="close" data-dismiss="modal" aria-label="Close"><i aria-hidden="true" class="ki ki-close"></i></button></div>
+            <form class="form" id="formNuevoPais">
+                <div class="modal-body">
+                    <div class="form-group"><label>Nombre del País:*</label><input type="text" id="nuevoPaisNombre" class="form-control" placeholder="Ej: México" required /></div>
+                    <div class="form-group"><label>Código ISO2:*</label><input type="text" id="nuevoPaisISO2" class="form-control" placeholder="MX" required maxlength="2" /></div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-light-primary font-weight-bold" data-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-primary font-weight-bold">Guardar País</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- ================================================================================= -->
+<!-- MODAL PARA NUEVA MONEDA -->
+<!-- ================================================================================= -->
+<div class="modal fade" id="modalNuevaMoneda" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header"><h5 class="modal-title">Añadir Nueva Moneda</h5><button type="button" class="close" data-dismiss="modal" aria-label="Close"><i aria-hidden="true" class="ki ki-close"></i></button></div>
+            <form class="form" id="formNuevaMoneda">
+                <div class="modal-body">
+                    <div class="form-group"><label>Nombre de la Moneda:*</label><input type="text" id="nuevaMonedaNombre" class="form-control" placeholder="Ej: Peso Mexicano" required /></div>
+                    <div class="form-group"><label>Código ISO3:*</label><input type="text" id="nuevaMonedaISO3" class="form-control" placeholder="MXN" required maxlength="3" /></div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-light-primary font-weight-bold" data-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-primary font-weight-bold">Guardar Moneda</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+<%# ----- SCRIPTS ESPECÍFICOS PARA ESTA PÁGINA ----- %>
+<% block('scripts', `
+<script>
+    "use strict";
+
+    // Función para manejar el formulario de Nuevo País
+    var KTPaisForm = function() {
+        var initFormSubmit = function() {
+            document.getElementById('formNuevoPais').addEventListener('submit', function(e) {
+                e.preventDefault();
+                const nombre = document.getElementById('nuevoPaisNombre').value.trim();
+                const iso2 = document.getElementById('nuevoPaisISO2').value.trim().toUpperCase();
+                if (!nombre || !iso2) return;
+                
+                const newOption = new Option(nombre + ' (' + iso2 + ')', iso2);
+                document.getElementById('paisSelect').add(newOption);
+                
+                $('#modalNuevoPais').modal('hide');
+                this.reset();
+                Swal.fire("¡Éxito!", "El país " + nombre + " ha sido añadido a la lista.", "success");
+            });
+        };
+        return { init: function() { initFormSubmit(); } };
+    }();
+
+    // Función para manejar el formulario de Nueva Moneda
+    var KTMonedaForm = function() {
+        var initFormSubmit = function() {
+            document.getElementById('formNuevaMoneda').addEventListener('submit', function(e) {
+                e.preventDefault();
+                const nombre = document.getElementById('nuevaMonedaNombre').value.trim();
+                const iso3 = document.getElementById('nuevaMonedaISO3').value.trim().toUpperCase();
+                if (!nombre || !iso3) return;
+
+                const newOption = new Option(iso3 + ' - ' + nombre, iso3);
+                document.getElementById('monedaSelect').add(newOption);
+
+                $('#modalNuevaMoneda').modal('hide');
+                this.reset();
+                Swal.fire("¡Éxito!", "La moneda " + nombre + " ha sido añadida a la lista.", "success");
+            });
+        };
+        return { init: function() { initFormSubmit(); } };
+    }();
+    
+    // Función para cargar todas las zonas horarias de IANA
+    var KTTimezoneLoader = function() {
+        var initTimezoneSelect = function() {
+            const timezones = Intl.DateTimeFormat().resolvedOptions().timeZone ? [Intl.DateTimeFormat().resolvedOptions().timeZone, ...Object.keys(moment.tz._zones).filter(tz => tz.includes('/'))] : Object.keys(moment.tz._zones).filter(tz => tz.includes('/'));
+            const uniqueTimezones = [...new Set(timezones)].sort();
+            
+            const timezoneSelect = document.getElementById('timezoneSelect');
+            timezoneSelect.innerHTML = '<option value="" disabled selected>Seleccionar...</option>';
+            uniqueTimezones.forEach(tz => {
+                const option = new Option(tz, tz);
+                timezoneSelect.add(option);
+            });
+        };
+        return { init: function() { initTimezoneSelect(); } };
+    }();
+
+    // Inicializador de DataTables
+    var KTDatatables = function() {
+        var initTable = function() {
+            $('#kt_datatable_sectores').DataTable({
+                responsive: true,
+                language: { "url": "https://cdn.datatables.net/plug-ins/1.10.25/i18n/Spanish.json" }
+            });
+        };
+        return { init: function() { initTable(); } };
+    }();
+
+    // Inicializar todo cuando el documento esté listo
+    jQuery(document).ready(function() {
+        KTDatatables.init();
+        KTPaisForm.init();
+        KTMonedaForm.init();
+        KTTimezoneLoader.init();
+    });
+</script>
+`) %>

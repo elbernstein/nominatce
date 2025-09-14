@@ -1,0 +1,74 @@
+<%# views/nomina/_partial_feriados.ejs %>
+
+<div class="d-flex justify-content-between align-items-center mb-5">
+    <div>
+        <h4 class="card-title">Calendario de Feriados</h4>
+        <span class="text-muted">Administración de días no laborables por sector.</span>
+    </div>
+    <button type="button" class="btn btn-primary font-weight-bolder" data-toggle="modal" data-target="#modalNuevoFeriado">
+        <i class="la la-plus"></i> Añadir Feriado
+    </button>
+</div>
+
+<!-- Tabla de Feriados -->
+<table class="table table-bordered table-hover table-checkable datatable">
+    <thead>
+        <tr>
+            <th>Fecha</th>
+            <th>Descripción</th>
+            <th>Sector Aplicable</th>
+            <th>Acciones</th>
+        </tr>
+    </thead>
+    <tbody>
+        <% feriados.forEach(f => { %>
+            <tr>
+                <td><%= new Date(f.fecha).toLocaleDateString('es-ES', { timeZone: 'UTC' }) %></td>
+                <td><%= f.descripcion %></td>
+                <td><%= f.sector.nombre_comercial %></td>
+                <td nowrap="nowrap">
+                    <a href="/nomina/feriado/eliminar/<%= f._id %>" class="btn btn-sm btn-clean btn-icon btn-eliminar" title="Eliminar">
+                        <i class="la la-trash"></i>
+                    </a>
+                </td>
+            </tr>
+        <% }) %>
+    </tbody>
+</table>
+
+<!-- Modal para Nuevo Feriado -->
+<div class="modal fade" id="modalNuevoFeriado" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Añadir Nuevo Feriado</h5>
+                <button type="button" class="close" data-dismiss="modal"><i class="ki ki-close"></i></button>
+            </div>
+            <form action="/nomina/feriado" method="POST">
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label>Sector (Empresa - País):*</label>
+                        <select name="sector" class="form-control" required>
+                            <option value="">Seleccione un sector...</option>
+                            <% sectores.forEach(s => { %>
+                                <option value="<%= s._id %>"><%= s.nombre_comercial %> (<%= s.pais_iso2 %>)</option>
+                            <% }) %>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Fecha:*</label>
+                        <input type="date" name="fecha" class="form-control" required />
+                    </div>
+                    <div class="form-group">
+                        <label>Descripción:*</label>
+                        <input type="text" name="descripcion" class="form-control" placeholder="Ej: Día de la Independencia" required />
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-light-primary font-weight-bold" data-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-primary font-weight-bold">Guardar Feriado</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,81 @@
+<%# views/nomina/asistencia.ejs %>
+
+<div class="row">
+    <div class="col-lg-5">
+        <div class="card card-custom h-100">
+            <div class="card-header">
+                <div class="card-title">
+                    <h3 class="card-label">Registro Manual de Marcaje</h3>
+                </div>
+            </div>
+            <form class="form" action="/nomina/marcaje" method="POST">
+                <div class="card-body">
+                    <div class="form-group">
+                        <label>Empleado:*</label>
+                        <select name="empleado" class="form-control select2" id="kt_select2_empleado" required>
+                            <option value="">Seleccione un empleado...</option>
+                            <% empleados.forEach(e => { %>
+                                <option value="<%= e._id %>"><%= e.nombres %> <%= e.apellidos %> (<%= e.documento %>)</option>
+                            <% }) %>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Fecha y Hora del Marcaje:*</label>
+                        <input type="datetime-local" name="ts" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Tipo de Marcaje:*</label>
+                        <select name="tipo" class="form-control" required>
+                            <option value="IN">Entrada (IN)</option>
+                            <option value="OUT">Salida (OUT)</option>
+                        </select>
+                    </div>
+                     <input type="hidden" name="fuente" value="MANUAL">
+                </div>
+                <div class="card-footer">
+                    <button type="submit" class="btn btn-primary mr-2">Registrar Marcaje</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <div class="col-lg-7">
+        <div class="card card-custom h-100">
+            <div class="card-header">
+                <div class="card-title">
+                    <h3 class="card-label">Carga Masiva de Marcajes (CSV)</h3>
+                </div>
+            </div>
+             <form class="form" action="/nomina/marcajes-csv" method="POST" enctype="multipart/form-data">
+                <div class="card-body">
+                    <div class="form-group">
+                        <label>Archivo CSV:*</label>
+                        <input type="file" name="archivo_csv" class="form-control-file" accept=".csv" required>
+                    </div>
+                    <div class="alert alert-custom alert-light-info mt-5" role="alert">
+                        <div class="alert-icon"><i class="flaticon-information"></i></div>
+                        <div class="alert-text">
+                            <p>El archivo CSV debe contener las siguientes columnas (sin cabecera):</p>
+                            <ul>
+                                <li><strong>documento_empleado</strong>: El N° de documento del empleado.</li>
+                                <li><strong>timestamp</strong>: La fecha y hora en formato ISO (Ej: <code>2025-09-11T08:00:00Z</code>).</li>
+                                <li><strong>tipo</strong>: El tipo de marcaje, ya sea <code>IN</code> o <code>OUT</code>.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                 <div class="card-footer">
+                    <button type="submit" class="btn btn-success mr-2">Cargar Archivo</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Inicializar Select2 para la búsqueda de empleados
+    $('#kt_select2_empleado').select2({
+        placeholder: "Buscar empleado...",
+    });
+});
+</script>

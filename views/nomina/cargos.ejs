@@ -1,0 +1,172 @@
+<%# views/nomina/cargos.ejs (Versión limpia para usar con layout) %>
+
+<!--begin::Content-->
+<div class="content d-flex flex-column flex-column-fluid" id="kt_content">
+    <!--begin::Entry-->
+    <div class="d-flex flex-column-fluid">
+        <!--begin::Container-->
+        <div class="container">
+            <!--begin::Card-->
+            <div class="card card-custom">
+                <div class="card-header flex-wrap border-0 pt-6 pb-0">
+                    <div class="card-title">
+                        <h3 class="card-label">Gestión de Cargos y Jerarquías
+                            <span class="d-block text-muted pt-2 font-size-sm">Catálogo de puestos de trabajo de la organización.</span>
+                        </h3>
+                    </div>
+                    <div class="card-toolbar">
+                        <button type="button" class="btn btn-primary font-weight-bolder" data-toggle="modal" data-target="#modalNuevoCargo">
+                            <i class="la la-plus"></i> Nuevo Cargo
+                        </button>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <table class="table table-bordered table-hover table-checkable" id="kt_datatable_cargos">
+                        <thead>
+                            <tr>
+                                <th>Nombre del Cargo</th>
+                                <th>Descripción</th>
+                                <th>Nivel Jerárquico</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% cargos.forEach(cargo => { %>
+                                <tr>
+                                    <td><%= cargo.nombre %></td>
+                                    <td><%= cargo.descripcion || 'N/A' %></td>
+                                    <td><%= cargo.nivel_jerarquico %></td>
+                                    <td nowrap="nowrap">
+                                        <a href="javascript:;" class="btn btn-sm btn-clean btn-icon" title="Editar"
+                                            data-toggle="modal" data-target="#modalEditarCargo"
+                                            data-id="<%= cargo._id %>"
+                                            data-nombre="<%= cargo.nombre %>"
+                                            data-descripcion="<%= cargo.descripcion || '' %>"
+                                            data-nivel="<%= cargo.nivel_jerarquico %>">
+                                            <i class="la la-edit"></i>
+                                        </a>
+                                        <a href="/nomina/cargo/eliminar/<%= cargo._id %>" class="btn btn-sm btn-clean btn-icon btn-eliminar" title="Eliminar">
+                                            <i class="la la-trash"></i>
+                                        </a>
+                                    </td>
+                                </tr>
+                            <% }) %>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <!--end::Card-->
+        </div>
+        <!--end::Container-->
+    </div>
+    <!--end::Entry-->
+</div>
+<!--end::Content-->
+
+<!-- ======================= MODAL NUEVO CARGO ======================= -->
+<div class="modal fade" id="modalNuevoCargo" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Crear Nuevo Cargo</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><i aria-hidden="true" class="ki ki-close"></i></button>
+            </div>
+            <form class="form" action="/nomina/cargo" method="POST">
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label>Nombre del Cargo:*</label>
+                        <input type="text" name="nombre" class="form-control" placeholder="Ej: Gerente de Operaciones" required />
+                    </div>
+                    <div class="form-group">
+                        <label>Descripción:</label>
+                        <textarea name="descripcion" class="form-control" rows="3" placeholder="Responsabilidades del cargo"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>Nivel Jerárquico:*</label>
+                        <input type="number" name="nivel_jerarquico" class="form-control" value="1" min="1" required />
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-light-primary font-weight-bold" data-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-primary font-weight-bold">Guardar Cargo</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- ======================= MODAL EDITAR CARGO ======================= -->
+<div class="modal fade" id="modalEditarCargo" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Editar Cargo</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><i aria-hidden="true" class="ki ki-close"></i></button>
+            </div>
+            <form class="form" id="formEditarCargo" action="" method="POST"> <!-- La acción se llenará con JS -->
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label>Nombre del Cargo:*</label>
+                        <input type="text" name="nombre" id="editNombre" class="form-control" required />
+                    </div>
+                    <div class="form-group">
+                        <label>Descripción:</label>
+                        <textarea name="descripcion" id="editDescripcion" class="form-control" rows="3"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>Nivel Jerárquico:*</label>
+                        <input type="number" name="nivel_jerarquico" id="editNivel" class="form-control" min="1" required />
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-light-primary font-weight-bold" data-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-primary font-weight-bold">Actualizar Cargo</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<%# ----- SCRIPTS ESPECÍFICOS PARA ESTA PÁGINA ----- %>
+<% block('scripts', `
+<script>
+    "use strict";
+
+    // Función para poblar el modal de edición
+    function prepararModalEdicion() {
+        $('#modalEditarCargo').on('show.bs.modal', function (event) {
+            const button = $(event.relatedTarget); // Botón que activó el modal
+            const id = button.data('id');
+            const nombre = button.data('nombre');
+            const descripcion = button.data('descripcion');
+            const nivel = button.data('nivel');
+            
+            const modal = $(this);
+            // Actualizamos la URL del formulario
+            modal.find('form').attr('action', '/nomina/cargo/editar/' + id);
+            
+            // Llenamos los campos del formulario
+            modal.find('#editNombre').val(nombre);
+            modal.find('#editDescripcion').val(descripcion);
+            modal.find('#editNivel').val(nivel);
+        });
+    }
+
+    // Inicializador de DataTables
+    var KTDatatables = function() {
+        var initTable = function() {
+            $('#kt_datatable_cargos').DataTable({
+                responsive: true,
+                language: { "url": "https://cdn.datatables.net/plug-ins/1.10.25/i18n/Spanish.json" }
+            });
+        };
+        return { init: function() { initTable(); } };
+    }();
+
+    // Inicializar todo cuando el documento esté listo
+    jQuery(document).ready(function() {
+        KTDatatables.init();
+        prepararModalEdicion();
+    });
+</script>
+`) %>

@@ -1,0 +1,98 @@
+<%- include("../templantes/cabecera", { titulo: 'Módulo de Nómina' }) %>
+
+<!--begin::Content-->
+<div class="content d-flex flex-column flex-column-fluid" id="kt_content">
+    <div class="d-flex flex-column-fluid">
+        <div class="container">
+            
+            <div class="card card-custom">
+                <div class="card-body p-10">
+                    <div class="text-center mb-10">
+                        <h1 class="font-weight-bolder">Módulo de Nómina Multinacional</h1>
+                        <p class="lead text-muted">Seleccione una tarea para comenzar.</p>
+                    </div>
+
+                    <div class="row">
+                        <!-- Tarjeta para Configuración -->
+                        <div class="col-md-6 col-lg-3 mb-8">
+                            <a href="/nomina/configuracion" class="card card-custom h-100 card-stretch wave wave-primary">
+                                <div class="card-body text-center d-flex flex-column justify-content-between">
+                                    <div>
+                                        <i class="flaticon2-settings icon-4x text-primary"></i>
+                                        <h4 class="card-title font-weight-bolder text-dark-75 mt-5">Configuración Base</h4>
+                                        <p class="card-text text-muted">Sectores, Cargos y Horarios.</p>
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
+
+                        <!-- Tarjeta para Gestión de Personal -->
+                        <div class="col-md-6 col-lg-3 mb-8">
+                            <a href="/nomina/personal" class="card card-custom h-100 card-stretch wave wave-success">
+                                <div class="card-body text-center d-flex flex-column justify-content-between">
+                                    <div>
+                                        <i class="flaticon2-user-group icon-4x text-success"></i>
+                                        <h4 class="card-title font-weight-bolder text-dark-75 mt-5">Gestión de Personal</h4>
+                                        <p class="card-text text-muted">Expedientes de Empleados y Contratos.</p>
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
+
+                        <!-- ===================== TARJETAS CORREGIDAS ===================== -->
+
+                        <!-- Tarjeta para Tiempo y Asistencia (ENTRADA DE DATOS) -->
+                        <div class="col-md-6 col-lg-3 mb-8">
+                             <a href="/nomina/asistencia" class="card card-custom h-100 card-stretch wave wave-info">
+                                <div class="card-body text-center d-flex flex-column justify-content-between">
+                                   <div>
+                                        <i class="flaticon-time-1 icon-4x text-info"></i>
+                                        <h4 class="card-title font-weight-bolder text-dark-75 mt-5">Registro de Asistencia</h4>
+                                        <p class="card-text text-muted">Registre marcajes manuales o importe archivos CSV.</p>
+                                   </div>
+                                </div>
+                            </a>
+                        </div>
+
+                        <!-- Tarjeta para Timesheet (AUDITORÍA) -->
+                        <div class="col-md-6 col-lg-3 mb-8">
+                             <a href="/nomina/timesheet" class="card card-custom h-100 card-stretch wave wave-warning">
+                                <div class="card-body text-center d-flex flex-column justify-content-between">
+                                    <div>
+                                        <i class="flaticon-search-1 icon-4x text-warning"></i>
+                                        <h4 class="card-title font-weight-bolder text-dark-75 mt-5">Auditoría de Timesheet</h4>
+                                        <p class="card-text text-muted">Revise y valide las horas calculadas por período.</p>
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
+                        
+                         <!-- Tarjeta para el Paso Final (deshabilitada por ahora) -->
+                        <div class="col-md-12 text-center mt-10">
+                            <div class="separator separator-dashed my-8"></div>
+                            <h3 class="text-dark-50">Paso Final</h3>
+                        </div>
+
+                        <div class="col-md-12 mb-8">
+                            <a href="#" class="card card-custom bg-light-danger border-danger card-stretch wave wave-danger text-center">
+                                <div class="card-body">
+                                    <i class="flaticon-paper-plane-1 icon-4x text-danger"></i>
+                                    <h4 class="card-title font-weight-bolder text-dark-75 mt-5">Elaboración de Nómina</h4>
+                                    <p class="card-text text-muted">Calcule los pagos y genere los recibos para un período de nómina.</p>
+                                </div>
+                            </a>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+        </div>
+        <!--end::Container-->
+    </div>
+    <!--end::Entry-->
+</div>
+<!--end::Content-->
+
+<%- include("../templantes/footer") %>
+<%- include("../templantes/script_page") %>

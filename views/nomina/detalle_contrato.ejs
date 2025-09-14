@@ -1,0 +1,63 @@
+<%- include("../templantes/cabecera", { titulo: titulo }) %>
+
+<div class="content d-flex flex-column flex-column-fluid" id="kt_content">
+    <div class="d-flex flex-column-fluid">
+        <div class="container">
+            <div class="card card-custom">
+                <div class="card-header">
+                    <div class="card-title">
+                        <h3 class="card-label">Gestionar Contrato: <%= contrato.tipo %> (<%= contrato.periodicidad %>)</h3>
+                    </div>
+                </div>
+                <form action="/nomina/contratos/<%= contrato._id %>/asignar" method="POST">
+                    <div class="card-body">
+                        <p class="text-muted">Seleccione los empleados que estarán regidos por las condiciones de este contrato maestro. Los empleados ya asignados a otro contrato serán reasignados.</p>
+                        
+                        <!-- Usamos el componente Dual Listbox de Metronic para una UI amigable -->
+                        <select id="kt_dual_listbox_empleados" name="empleados_asignados" multiple>
+                            <!-- Llenado con JavaScript -->
+                            <% empleadosSinAsignar.forEach(emp => { %>
+                                <option value="<%= emp._id %>"><%= emp.nombres %> <%= emp.apellidos %> (<%= emp.documento %>)</option>
+                            <% }) %>
+
+                            <% empleadosAsignados.forEach(emp => { %>
+                                <option value="<%= emp._id %>" selected><%= emp.nombres %> <%= emp.apellidos %> (<%= emp.documento %>)</option>
+                            <% }) %>
+                        </select>
+                    </div>
+                    <div class="card-footer d-flex justify-content-between">
+                        <a href="/nomina/personal#tab_contratos" class="btn btn-secondary">Volver al Catálogo</a>
+                        <button type="submit" class="btn btn-primary">Guardar Asignaciones</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<%- include("../templantes/footer") %>
+<%- include("../templantes/script_page") %>
+
+<script>
+    "use strict";
+    jQuery(document).ready(function() {
+        // Inicializar el Dual Listbox
+        var listbox = $('#kt_dual_listbox_empleados');
+
+        // Esta es la configuración para inicializar el componente.
+        // Se encarga de transformar el <select> en las dos cajas interactivas.
+        var dualListBox = new DualListbox(listbox.get(0), {
+            // Textos en español para mejorar la experiencia de usuario
+            addEvent: function(value) {
+                console.log("Añadido: " + value);
+            },
+            removeEvent: function(value) {
+                console.log("Quitado: " + value);
+            },
+            availableListLabel: 'Empleados Disponibles',
+            selectedListLabel: 'Empleados Asignados',
+            searchPlaceholder: 'Buscar empleado',
+            moveOnSelect: false,
+        });
+    });
+</script>

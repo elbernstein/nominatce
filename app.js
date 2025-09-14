@@ -1,3 +1,6 @@
+// ===============================================
+// IMPORTACIÓN DE MÓDULOS
+// ===============================================
 const express = require('express');
 const http = require('http');
 const session = require('express-session');
@@ -8,21 +11,48 @@ const methodOverride = require('method-override');
 const compression = require('compression');
 const { Server } = require('socket.io');
 const path = require('path');
+const mongoose = require('mongoose'); // <-- Importante para la conexión principal
 require('dotenv').config();
 
+// ===============================================
+// INICIALIZACIÓN Y CONFIGURACIÓN DE CONEXIÓN
+// ===============================================
 const app = express();
 const server = http.createServer(app);
-const io = new Server(server, { cors: { origin: "*", methods: ["GET","POST"] } });
+const io = new Server(server, { cors: { origin: "*", methods: ["GET", "POST"] } });
+const puerto = process.env.PORT || 3033;
 
-const puerto = process.env.PORT || 3000;
-const sessionStore = require('./sessionStore');
+// --- Configuración de Conexión a MongoDB Atlas ---
+const password = "r7ogqjJ7XyULgrZY";
+const usuario = "bernstein";
+const bd = "tucajaex";
+const uri = `mongodb+srv://${usuario}:${password}@cluster0.ui39vqd.mongodb.net/${bd}?retryWrites=true&w=majority&appName=Cluster0`;
 
-// Vistas y estáticos (importante usando __dirname de raíz)
+// Conectamos Mongoose a la base de datos de Atlas
+mongoose.connect(uri, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true
+}).then(() => console.log('✅ Conexión principal a MongoDB (Atlas) exitosa.'))
+  .catch(err => console.error('❌ Error en la conexión principal a MongoDB:', err));
+
+const MongoStore = require('connect-mongo');
+const sessionStore = MongoStore.create({
+    mongoUrl: uri, // Reutilizamos la misma URI para las sesiones
+    collectionName: 'sessions',
+    ttl: 14 * 24 * 60 * 60,
+    autoRemove: 'native',
+});
+
+// ===============================================
+// CONFIGURACIÓN DEL MOTOR DE VISTAS (EJS)
+// ===============================================
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
-app.use(express.static(path.join(__dirname, 'public')));
 
-// Middlewares
+// ===============================================
+// CONFIGURACIÓN DE MIDDLEWARES
+// ===============================================
+app.use(express.static(path.join(__dirname, 'public')));
 app.use(cors());
 app.use(methodOverride('_method'));
 app.use(morgan('dev'));
@@ -30,9 +60,9 @@ app.use(compression());
 app.use(express.json({ limit: '100mb' }));
 app.use(express.urlencoded({ extended: true, limit: '100mb' }));
 
-// Sesiones
+// Configuración de Sesiones (ahora usa el store que definimos arriba)
 app.use(session({
-  secret: process.env.SECRET_KEY || 'tu-clave-secreta',
+  secret: process.env.SECRET_KEY || 'tu-clave-secreta-deberia-ser-mas-larga',
   resave: false,
   saveUninitialized: false,
   store: sessionStore,
@@ -43,25 +73,30 @@ app.use(session({
   }
 }));
 
-// Flash messages
 app.use(flash());
 
-// Exponer sesión en vistas (como ya usas)
 app.use((req, res, next) => {
   res.locals.session = req.session || {};
+  req.io = io;
   next();
 });
 
-// Inyectar io
-app.use((req, res, next) => { req.io = io; next(); });
+// ===============================================
+// RUTAS DE LA APLICACIÓN
+// ===============================================
+app.use('/', require('./src/router/nomina.router'));
 
-// Rutas (ajusta si tus carpetas están en raíz)
-app.use('/', require('./src/router/auth.router')); 
-app.use('/', require('./src/router/nomina.router')); 
-app.get('/', (req,res)=> res.render('home', { titulo: 'Inicio' }));
+// ===============================================
+// CONFIGURACIÓN DE SOCKET.IO
+// ===============================================
+io.on('connection', (socket) => {
+  console.log('🔌 Nuevo cliente conectado a Socket.IO:', socket.id);
+});
 
-// Socket.io
-io.on('connection', (socket) => console.log('Nuevo cliente', socket.id));
-
-// Arranque
-server.listen(puerto, () => console.log('Entrando al Sistema en el puerto ' + puerto));
+// ===============================================
+// ARRANQUE DEL SERVIDOR
+// ===============================================
+server.listen(puerto, () => {
+  console.log(`🚀 Sistema de Nómina corriendo exitosamente en http://localhost:${puerto}`);
+  console.log(`➡️  Accede al dashboard principal en http://localhost:${puerto}/nomina`);
+});

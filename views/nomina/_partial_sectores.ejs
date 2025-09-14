@@ -1,0 +1,45 @@
+<%# views/nomina/_partial_sectores.ejs %>
+
+<div class="d-flex justify-content-between align-items-center mb-5">
+    <div>
+        <h4 class="card-title">Sectores (Empresa-País)</h4>
+        <span class="text-muted">Administración de sedes, reglas de negocio y zonas horarias.</span>
+    </div>
+    <button type="button" class="btn btn-primary font-weight-bolder" data-toggle="modal" data-target="#modalNuevoSector">
+        <i class="la la-plus"></i> Nuevo Sector
+    </button>
+</div>
+
+<!-- Tabla de Sectores -->
+<table class="table table-bordered table-hover table-checkable datatable">
+    <thead>
+        <tr><th>Nombre Comercial</th><th>Razón Social</th><th>País</th><th>Moneda</th><th>Timezone</th><th>Activo</th><th>Acciones</th></tr>
+    </thead>
+    <tbody>
+        <% sectores.forEach(s => { %>
+            <tr>
+                <td><%= s.nombre_comercial %></td>
+                <td><%= s.razon_social %></td>
+                <td><%= s.pais_iso2 %></td>
+                <td><%= s.moneda_iso3 %></td>
+                <td><%= s.timezone %></td>
+                <td><span class="label label-<%= s.activo ? 'success' : 'danger' %> label-inline"><%= s.activo ? 'Sí' : 'No' %></span></td>
+                <td nowrap="nowrap">
+                    <a href="javascript:;" class="btn btn-sm btn-clean btn-icon" title="Editar"><i class="la la-edit"></i></a>
+                    <a href="javascript:;" class="btn btn-sm btn-clean btn-icon" title="Eliminar"><i class="la la-trash"></i></a>
+                </td>
+            </tr>
+        <% }) %>
+    </tbody>
+</table>
+
+<!-- Modales para Sectores (los mismos que tenías en config.ejs) -->
+<div class="modal fade" id="modalNuevoSector" tabindex="-1" role="dialog" aria-hidden="true">
+    <!-- ... Pega aquí el contenido completo del modal #modalNuevoSector ... -->
+</div>
+<div class="modal fade" id="modalNuevoPais" tabindex="-1" role="dialog" aria-hidden="true">
+     <!-- ... Pega aquí el contenido completo del modal #modalNuevoPais ... -->
+</div>
+<div class="modal fade" id="modalNuevaMoneda" tabindex="-1" role="dialog" aria-hidden="true">
+     <!-- ... Pega aquí el contenido completo del modal #modalNuevaMoneda ... -->
+</div>
